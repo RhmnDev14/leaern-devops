@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  # Nama layanan kontainer Anda
+  golang-app:
+    # Perintah untuk membangun image Docker menggunakan Dockerfile di direktori saat ini
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # Nama container yang akan muncul di 'docker ps'
+    container_name: go_server
+    
+    # Mapping port: port 80 (host Anda) akan terhubung ke port 8080 (di dalam container)
+    ports:
+    - "8080:8080"
+    
+    # Opsi agar container restart otomatis jika gagal
+    restart: always
+
+# Opsional: Jika Anda perlu database atau layanan lain, tambahkan di sini (misal: postgres, redis)

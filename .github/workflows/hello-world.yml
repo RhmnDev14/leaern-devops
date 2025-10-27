@@ -1,0 +1,56 @@
+name: Go CI/CD Pipeline
+
+on:
+  # Trigger workflow saat ada push ke branch 'main'
+  push:
+    branches: [ main ]
+  # Trigger workflow saat ada pull request ke branch 'main'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Nama job: build-and-test
+  build-and-test:
+    # Jalankan job ini pada mesin virtual Ubuntu terbaru
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout kode
+    # Mengambil salinan kode repositori
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # 2. Setup Go Environment
+    # Mengatur Go versi 1.22
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22' 
+        cache: true # Menggunakan cache untuk modules
+
+    # 3. Download Dependencies (Modules)
+    # Ini sama dengan menjalankan 'go mod download'
+    - name: Download Go modules
+      run: go mod download
+
+    # 4. Jalankan Testing
+    # Menjalankan semua tes di proyek, termasuk coverage
+    - name: Run Tests
+      run: go test -v ./...
+    
+    # 5. Build Binary (Kompilasi)
+    # Membuat binary/executable file dari kode Go
+    - name: Build Application
+      run: go build -v ./...
+      
+    # Opsional: Cek hasil build
+    - name: Verify Build Output
+      run: |
+        # Asumsikan nama binary adalah nama direktori (learn-devops)
+        if [ -f learn-devops ]; then
+          echo "Build berhasil, executable 'learn-devops' ditemukan."
+        else
+          echo "Nama executable salah atau build gagal."
+          # Jika Anda yakin build di langkah 5 sukses, Anda bisa hapus 'exit 1' ini.
+          exit 1 
+        fi
